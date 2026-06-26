@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cockpit de Estudos — PGE-SP · TRF-3 · TJSP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F5EF;
+  --surface:#FFFFFF;
+  --surface-2:#EFEAE0;
+  --ink:#20242C;
+  --ink-soft:#5B6072;
+  --line:#E1DCCF;
+  --line-strong:#CFC8B6;
+  --gold:#B9882A;
+  --gold-ink:#6E4F12;
+  --stamp-alta:#A23E2E;
+  --stamp-media:#A6791A;
+  --stamp-baixa:#3E5C73;
+  --green:#2F7D5A;
+  --amber:#B8860B;
+  --red:#B03A2E;
+  --radius:14px;
+  --radius-sm:8px;
+  --shadow:0 1px 2px rgba(32,36,44,.06), 0 6px 16px rgba(32,36,44,.06);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  background-image: radial-gradient(circle at 1px 1px, rgba(32,36,44,0.035) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color:var(--ink);
+  font-family:'DM Sans', sans-serif;
+  font-size:14.5px;
+  line-height:1.5;
+  min-height:100vh;
+}
+h1,h2,h3,h4,.display{font-family:'Outfit', sans-serif;}
+button, select, input, textarea{font-family:'DM Sans', sans-serif; font-size:14px;}
+::selection{background:#E7D8AE;}
+
+.app{max-width:1280px;margin:0 auto;padding:18px 22px 60px;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 22px;box-shadow:var(--shadow);flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;}
+.seal{width:46px;height:46px;border-radius:50%;border:2px dashed var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Outfit';font-weight:800;font-size:11px;letter-spacing:.5px;color:var(--gold-ink); transform:rotate(-8deg); flex-shrink:0;background:repeating-linear-gradient(135deg, rgba(185,136,42,.06) 0 6px, transparent 6px 12px);}
+.brand-text h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px;}
+.brand-text p{margin:2px 0 0;color:var(--ink-soft);font-size:12.5px;}
+.countdown{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.countdown-box{text-align:center;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm); padding:8px 16px;min-width:78px;}
+.countdown-box .num{font-family:'Outfit';font-weight:800;font-size:22px;color:var(--stamp-alta);line-height:1;}
+.countdown-box .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-soft);}
+.date-edit{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-soft);}
+.date-edit input{border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:var(--surface);}
+
+.tabs{display:flex;gap:6px;margin-top:18px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:0;}
+.tab-btn{font-family:'Outfit';font-weight:600;font-size:13.5px;letter-spacing:.2px;background:transparent;border:none;padding:11px 16px;cursor:pointer;color:var(--ink-soft);border-bottom:3px solid transparent; transition:.15s;}
+.tab-btn:hover{color:var(--ink);}
+.tab-btn.active{color:var(--ink); border-color:var(--gold);}
+.tab-panel{display:none;padding-top:20px;}
+.tab-panel.active{display:block;}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}
+.btn{font-family:'Outfit';font-weight:600;font-size:13px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);padding:8px 14px;cursor:pointer;transition:.15s;}
+.btn:hover{background:var(--surface-2);}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+.btn.primary:hover{background:#000;}
+.btn.gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.btn.gold:hover{background:var(--gold-ink);}
+.btn.danger{background:#fff;color:var(--red);border-color:var(--red);}
+.btn.danger:hover{background:#FBEAE7;}
+.btn.small{padding:4px 9px;font-size:11.5px;border-radius:6px;}
+.btn.icon{padding:5px 8px;line-height:1;}
+
+.chip{display:inline-flex;align-items:center;gap:5px;font-family:'Outfit';font-weight:600;font-size:10.5px;letter-spacing:.3px;padding:3px 9px;border-radius:99px;color:#fff;white-space:nowrap;}
+.stamp{display:inline-flex;align-items:center;justify-content:center;font-family:'Outfit';font-weight:800;font-size:9.5px;letter-spacing:.8px;padding:3px 9px;border-radius:99px;border:1.5px dashed currentColor;text-transform:uppercase; transform:rotate(-2deg);}
+.stamp.alta{color:var(--stamp-alta);}
+.stamp.media{color:var(--stamp-media);}
+.stamp.baixa{color:var(--stamp-baixa);}
+
+.week-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px;}
+.week-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.week-nav select{padding:7px 10px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);font-family:'Outfit';font-weight:600;}
+.view-toggle{display:flex;background:var(--surface-2);border-radius:8px;padding:3px;gap:2px;}
+.view-toggle button{border:none;background:transparent;padding:6px 12px;border-radius:6px;font-family:'Outfit';font-weight:600;font-size:12.5px;cursor:pointer;color:var(--ink-soft);}
+.view-toggle button.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);}
+
+.days-grid{display:grid;grid-template-columns:repeat(7, minmax(150px,1fr));gap:10px;overflow-x:auto;}
+.day-col{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);min-height:180px;display:flex;flex-direction:column;}
+.day-col-head{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+.day-col-head h4{margin:0;font-size:12.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-soft);}
+.day-col-body{padding:8px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.day-col.sunday .day-col-body{align-items:center;justify-content:center;text-align:center;color:var(--ink-soft);font-style:italic;font-size:12.5px;padding:18px 10px;}
+
+.topic-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 10px;cursor:grab; transition:.12s; position:relative;}
+.topic-card:hover{border-color:var(--line-strong);box-shadow:var(--shadow);}
+.topic-card.dragging{opacity:.4;}
+.topic-card .tc-top{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
+.topic-card .tc-name{font-size:13px;font-weight:500;line-height:1.35;margin-bottom:7px;}
+.topic-card .tc-foot{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;}
+.topic-card select.method-select{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;background:var(--surface-2);}
+.topic-card .tc-actions{display:flex;gap:4px;}
+.status-pill{font-size:10.5px;font-family:'Outfit';font-weight:600;border-radius:99px;padding:3px 9px;border:1px solid var(--line-strong);background:var(--surface-2);cursor:pointer;}
+.status-pill[data-status="iniciado"]{color:#8A5A0C;border-color:#E0BB78;background:#FBF1DF;}
+.status-pill[data-status="revisar"]{color:#5B5F97;border-color:#BFC1E0;background:#EFEFF8;}
+.status-pill[data-status="finalizado"]{color:var(--green);border-color:#A8D4BD;background:#E9F6EF;}
+
+.add-card-btn{border:1.5px dashed var(--line-strong);background:transparent;border-radius:10px;padding:8px;font-size:12px;color:var(--ink-soft);cursor:pointer;font-family:'Outfit';font-weight:600;}
+.add-card-btn:hover{background:var(--surface-2);color:var(--ink);}
+
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.kanban-col{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);min-height:300px;}
+.kanban-col-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+.kanban-col-head h4{margin:0;font-size:13.5px;}
+.kanban-count{font-family:'Outfit';font-weight:700;font-size:11.5px;background:var(--surface);border-radius:99px;padding:2px 9px;border:1px solid var(--line-strong);}
+.kanban-col-body{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:260px;}
+.kanban-col-body.drag-over{background:#EFE7CF;border-radius:10px;}
+
+.cycle-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;}
+@media (max-width:980px){.cycle-grid{grid-template-columns:1fr;}}
+.template-table{width:100%;border-collapse:collapse;}
+.template-table th,.template-table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:top;}
+.template-table th{font-family:'Outfit';font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-soft);}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-row .bar-label{width:230px;font-size:12.5px;flex-shrink:0;display:flex;align-items:center;gap:6px;}
+.bar-track{flex:1;background:var(--surface-2);border-radius:99px;height:10px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;}
+.bar-pct{width:38px;text-align:right;font-family:'Outfit';font-weight:700;font-size:12px;flex-shrink:0;}
+.split-bar{display:flex;height:26px;border-radius:99px;overflow:hidden;border:1px solid var(--line);margin:10px 0 4px;}
+.split-bar div{display:flex;align-items:center;justify-content:center;font-family:'Outfit';font-weight:700;font-size:11px;color:#fff;}
+
+.subject-list{display:flex;flex-direction:column;gap:10px;}
+.subject-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.subject-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;gap:10px;}
+.subject-head-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.subject-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.subject-head h3{margin:0;font-size:15px;}
+.incid-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.incid-tag{font-size:9.5px;font-family:'Outfit';font-weight:700;padding:2px 7px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);}
+.subject-body{display:none;padding:0 16px 16px;border-top:1px solid var(--line);}
+.subject-body.open{display:block;}
+.subject-total-bar{display:flex;align-items:center;gap:14px;font-size:12.3px;color:var(--ink-soft);margin:10px 0 6px;padding:9px 12px;background:var(--surface-2);border-radius:8px;flex-wrap:wrap;}
+.topic-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap;}
+.topic-row:last-child{border-bottom:none;}
+.trow-name{flex:1;min-width:200px;border:1px solid transparent;background:transparent;padding:5px 7px;border-radius:6px;font-size:13px;}
+.trow-name:hover, .trow-name:focus{border-color:var(--line-strong);background:var(--surface-2);outline:none;}
+.trow-importance{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:4px 6px;background:var(--surface-2);font-family:'Outfit';font-weight:600;flex-shrink:0;}
+.trow-stats{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-soft);flex-shrink:0;}
+.trow-num{width:50px;border:1px solid var(--line);border-radius:6px;padding:4px 5px;text-align:center;font-size:12px;}
+.trow-done{width:17px;height:17px;cursor:pointer;flex-shrink:0;}
+.topic-row.done .trow-name{text-decoration:line-through;color:var(--ink-soft);}
+.subject-head-progress{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.mini-track{width:80px;height:7px;background:var(--surface-2);border-radius:99px;overflow:hidden;flex-shrink:0;}
+.mini-fill{height:100%;border-radius:99px;}
+
+.timer-box{text-align:center;margin:14px 0 18px;}
+.timer-num{font-family:'Outfit';font-weight:800;font-size:46px;letter-spacing:1px;color:var(--ink);}
+.timer-state{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+.timer-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+
+.banca-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+@media (max-width:980px){.banca-grid{grid-template-columns:repeat(2,1fr);}}
+.banca-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;}
+.banca-card h4{margin:0 0 6px;font-size:13px;}
+.banca-card p{margin:0;font-size:11.8px;color:var(--ink-soft);}
+
+.stats-top{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+@media (max-width:980px){.stats-top{grid-template-columns:repeat(2,1fr);}}
+.stat-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;}
+.stat-box .v{font-family:'Outfit';font-weight:800;font-size:26px;}
+.stat-box .l{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;}
+.board2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:980px){.board2{grid-template-columns:1fr;}}
+.board-col{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:12px;}
+.board-col h4{margin:2px 0 10px;font-size:13px;}
+.progress-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:9px;}
+.progress-card .pc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.progress-card .pc-top strong{font-size:12.5px;}
+.progress-card small{color:var(--ink-soft);font-size:11px;}
+.progress-card .pc-meta{font-size:11px;color:var(--ink-soft);margin-top:6px;}
+
+.log-form{display:grid;grid-template-columns:1fr 1.15fr 1.3fr .95fr .8fr .75fr .75fr;gap:10px;align-items:end;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius) var(--radius) 0 0;padding:14px 14px 8px;}
+.log-form label{font-size:11px;color:var(--ink-soft);display:block;margin-bottom:4px;font-family:'Outfit';font-weight:600;letter-spacing:.2px;}
+.log-form input,.log-form select{width:100%;padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);}
+.log-form-actions{display:flex;gap:10px;align-items:flex-end;background:var(--surface);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:8px 14px 14px;margin-bottom:16px;}
+.log-form-actions textarea{flex:1;padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);resize:vertical;}
+@media (max-width:1100px){.log-form{grid-template-columns:1fr 1fr;}}
+table.log-table{width:100%;border-collapse:collapse;margin-top:6px;}
+table.log-table th, table.log-table td{padding:8px 9px;border-bottom:1px solid var(--line);font-size:12.5px;text-align:left;}
+table.log-table th{font-family:'Outfit';font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);}
+table.log-table select.log-edit, table.log-table input.log-edit{border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:12.3px;background:var(--surface);width:100%;}
+.acc{font-family:'Outfit';font-weight:800;}
+.acc.green{color:var(--green);}
+.acc.amber{color:var(--amber);}
+.acc.red{color:var(--red);}
+
+.overlay{position:fixed;inset:0;background:rgba(32,36,44,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+.overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:var(--radius);padding:22px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto;}
+.modal h3{margin:0 0 14px;font-size:16px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;font-family:'Outfit';font-weight:600;}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);}
+.field-row{display:flex;gap:10px;}
+.field-row .field{flex:1;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+
+.toast{position:fixed;bottom:18px;right:18px;background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:12.5px;font-family:'Outfit';font-weight:600;opacity:0;transform:translateY(8px);transition:.25s;z-index:60;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+.section-title{font-size:16px;margin:0 0 4px;}
+.section-sub{color:var(--ink-soft);font-size:12.8px;margin:0 0 16px;}
+.empty-note{color:var(--ink-soft);font-size:12.5px;font-style:italic;padding:10px 0;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:22px 0;}
+.flex-between{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="seal">EDITAL</div>
+      <div class="brand-text">
+        <h1>Cockpit de Estudos — Concursos Jurídicos</h1>
+        <p>PGE-SP · TRF-3 (Analista Judiciário) · TJSP — ciclo base + ciclo adaptativo</p>
+      </div>
+    </div>
+    <div class="countdown">
+      <div class="countdown-box"><div class="num" id="cd-days">--</div><div class="lbl">dias</div></div>
+      <div class="countdown-box"><div class="num" id="cd-weeks">--</div><div class="lbl">semanas</div></div>
+      <div class="date-edit">
+        <span>Data provável da prova</span>
+        <input type="date" id="exam-date-input" max="2027-12-31">
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="planning">Planejamento Semanal</button>
+    <button class="tab-btn" data-tab="cycles">Ciclos de Estudo</button>
+    <button class="tab-btn" data-tab="subjects">Matérias</button>
+    <button class="tab-btn" data-tab="stats">Estatísticas de Incidência</button>
+    <button class="tab-btn" data-tab="time">Tempo de Estudos</button>
+    <button class="tab-btn" data-tab="timer">Timer de Estudos</button>
+  </div>
+
+  <!-- ===== PLANNING TAB ===== -->
+  <div class="tab-panel active" id="panel-planning">
+    <div class="week-toolbar">
+      <div class="week-nav">
+        <button class="btn icon" id="week-prev">←</button>
+        <select id="week-select"></select>
+        <button class="btn icon" id="week-next">→</button>
+        <button class="btn small gold" id="week-add">+ semana</button>
+        <button class="btn small" id="week-edit">✎ editar semana</button>
+        <span id="week-range" style="color:var(--ink-soft);font-size:12.5px;"></span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div class="view-toggle">
+          <button data-view="days" class="active">Dias da semana</button>
+          <button data-view="kanban">Kanban</button>
+        </div>
+        <button class="btn gold small" id="btn-add-topic">+ Adicionar tópico</button>
+      </div>
+    </div>
+    <p class="section-sub" style="margin-top:-8px;">Acabaram as 25 semanas e o edital ainda não saiu? Use <strong>+ semana</strong> para estender o ciclo de estudos automaticamente antes da semana de revisão final.</p>
+    <div id="view-days"></div>
+    <div id="view-kanban" style="display:none;"></div>
+  </div>
+
+  <!-- ===== CYCLES TAB ===== -->
+  <div class="tab-panel" id="panel-cycles">
+    <h2 class="section-title">Como as 4h diárias são distribuídas</h2>
+    <p class="section-sub">80% do tempo no <strong>ciclo base</strong> (matérias comuns à PGE-SP, que sustentam Constitucional/Administrativo/Processual em qualquer concurso jurídico) e 20% no <strong>ciclo adaptativo</strong> (matérias exclusivas de Tribunais: Trabalho, Previdenciário, Penal, Português e RLM).</p>
+    <div class="cycle-grid">
+      <div class="card" style="padding:18px;">
+        <h3 style="margin-top:0;font-size:14px;">Modelo semanal de dedicação (Seg–Sáb)</h3>
+        <table class="template-table">
+          <thead><tr><th>Dia</th><th>Bloco 1 (~2h-2h15)</th><th>Bloco 2 (~1h45-2h)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Segunda</strong></td><td>Direito Constitucional</td><td>Direito Administrativo</td></tr>
+            <tr><td><strong>Terça</strong></td><td>Direito Processual Civil</td><td>Direito Civil</td></tr>
+            <tr><td><strong>Quarta</strong></td><td>Direito Tributário</td><td>Financeiro/Empresarial ou Ambiental (alternados)</td></tr>
+            <tr><td><strong>Quinta</strong></td><td>Matéria adaptativa (rotativa: Trabalho → Previdenciário → Penal → Português → RLM → PCD)</td><td>Direito Administrativo (continuação)</td></tr>
+            <tr><td><strong>Sexta</strong></td><td>Direitos Humanos ou Filosofia do Direito (alternados)</td><td>Direito Constitucional (continuação)</td></tr>
+            <tr><td><strong>Sábado</strong></td><td colspan="2">Redação / Peça Processual / Parecer / Estudo de Caso</td></tr>
+            <tr><td><strong>Domingo</strong></td><td colspan="2">Simulado completo + revisão dos erros da semana</td></tr>
+          </tbody>
+        </table>
+        <hr class="sep">
+        <h3 style="font-size:14px;">Ajuste fino quando um edital sair</h3>
+        <p class="section-sub" style="margin-bottom:0;">Quando PGE-SP, TRF-3 ou TJSP publicar edital, desloque o foco para o peso de questões daquele órgão e para o estilo da banca responsável (ex.: VUNESP é literal e cobra lei seca; FCC mistura lei seca com "Estudo de Caso"/Redação). Use a aba <em>Matérias</em> para consultar o perfil de cada banca.</p>
+      </div>
+      <div class="card" style="padding:18px;">
+        <h3 style="margin-top:0;font-size:14px;">Peso de cada matéria no ciclo (gerado a partir do seu cronograma)</h3>
+        <div id="cycle-bars"></div>
+        <hr class="sep">
+        <h3 style="font-size:14px;">Divisão Base × Adaptativo</h3>
+        <div class="split-bar" id="split-bar"></div>
+        <p class="section-sub" style="margin-bottom:0;font-size:11.8px;">Calculado em tempo real a partir dos tópicos do seu planejamento atual.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SUBJECTS TAB ===== -->
+  <div class="tab-panel" id="panel-subjects">
+    <h2 class="section-title">Perfil das bancas mais comuns</h2>
+    <div class="banca-grid">
+      <div class="banca-card"><h4>VUNESP</h4><p>Muito literal — cobra lei seca quase ao pé da letra. Pouca interpretação extensiva. Atenção redobrada a prazos, números e exceções do texto legal. Banca da PGE-SP.</p></div>
+      <div class="banca-card"><h4>FCC</h4><p>Mistura lei seca com interpretação sistêmica. Gosta de "Estudo de Caso" e Redação para Judiciário. Questões de Português e RLM mais elaboradas. Banca do TRF-3 (atual).</p></div>
+      <div class="banca-card"><h4>CEBRASPE</h4><p>Formato Certo/Errado, muito detalhista, adora jurisprudência recente dos Tribunais Superiores e "pegadinhas" de interpretação fina do enunciado.</p></div>
+      <div class="banca-card"><h4>FGV</h4><p>Cobra interpretação e conexão entre institutos de matérias diferentes; valoriza raciocínio jurídico aplicado, não só memorização.</p></div>
+      <div class="banca-card"><h4>QUADRIX</h4><p>Mais literal e objetiva, comum em cargos técnicos; baixa profundidade doutrinária, foco no texto de lei e em conceitos diretos.</p></div>
+    </div>
+
+    <div class="flex-between">
+      <div>
+        <h2 class="section-title" style="margin-bottom:2px;">Matérias e Conteúdo Programático</h2>
+        <p class="section-sub">Tags indicam a incidência estimada em provas recentes (PGE/TRT/TRF). Edite o nome, a importância e a contagem de questões/acertos de cada assunto diretamente na lista.</p>
+      </div>
+      <button class="btn gold small" id="btn-add-subject">+ Adicionar matéria</button>
+    </div>
+    <div class="subject-list" id="subject-list"></div>
+  </div>
+
+  <!-- ===== STATS TAB ===== -->
+  <div class="tab-panel" id="panel-stats">
+    <div class="flex-between" style="margin-bottom:14px;">
+      <h2 class="section-title" style="margin:0;">Progresso por matéria</h2>
+      <div class="week-nav">
+        <span style="font-size:12px;color:var(--ink-soft);">Progresso semanal:</span>
+        <select id="stats-week-select"></select>
+      </div>
+    </div>
+    <div class="stats-top">
+      <div class="stat-box"><div class="v" id="stat-total-pct">0%</div><div class="l">Progresso total do plano</div></div>
+      <div class="stat-box"><div class="v" id="stat-week-pct">0%</div><div class="l">Progresso da semana selecionada</div></div>
+      <div class="stat-box"><div class="v" id="stat-done">0</div><div class="l">Tópicos finalizados</div></div>
+      <div class="stat-box"><div class="v" id="stat-total">0</div><div class="l">Tópicos no plano</div></div>
+    </div>
+    <div class="board2">
+      <div class="board-col"><h4>Ciclo Base (80%) — PGE-SP</h4><div id="board-base"></div></div>
+      <div class="board-col"><h4>Ciclo Adaptativo (20%) + Redação</h4><div id="board-adapt"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== TIME TAB ===== -->
+  <div class="tab-panel" id="panel-time">
+    <h2 class="section-title">Registro diário de horas e desempenho</h2>
+    <p class="section-sub">Lance manualmente as horas estudadas (formato 00:00h), o assunto/tópico trabalhado e o resultado dos exercícios. O percentual de acerto é calculado e colorido automaticamente, e os totais por tópico alimentam a aba Matérias.</p>
+    <div class="log-form">
+      <div><label>Data</label><input type="date" id="log-date"></div>
+      <div><label>Matéria</label><select id="log-subject"></select></div>
+      <div><label>Assunto/Tópico</label><select id="log-topic"></select></div>
+      <div><label>Atividade</label><select id="log-activity"></select></div>
+      <div><label>Horas (00:00h)</label><input type="text" id="log-hours" placeholder="02:30"></div>
+      <div><label>Questões</label><input type="number" id="log-questions" min="0" placeholder="0"></div>
+      <div><label>Erros</label><input type="number" id="log-errors" min="0" placeholder="0"></div>
+    </div>
+    <div class="log-form-actions">
+      <div style="flex:1;"><label style="font-size:11px;color:var(--ink-soft);display:block;margin-bottom:4px;font-family:'Outfit';font-weight:600;">Observações (o que foi feito/lido)</label><textarea id="log-notes" rows="1" placeholder="O que foi feito/lido nesta sessão"></textarea></div>
+      <button class="btn primary" id="btn-add-log">Adicionar</button>
+    </div>
+
+    <div class="stats-top">
+      <div class="stat-box"><div class="v" id="time-total-hours">00:00h</div><div class="l">Total de horas registradas</div></div>
+      <div class="stat-box"><div class="v" id="time-total-questions">0</div><div class="l">Questões respondidas</div></div>
+      <div class="stat-box"><div class="v" id="time-total-acertos">0</div><div class="l">Acertos</div></div>
+      <div class="stat-box"><div class="v" id="time-total-acc">0%</div><div class="l">Aproveitamento geral</div></div>
+    </div>
+
+    <h3 style="font-size:14px;margin-bottom:6px;">Registros (clique em qualquer campo para editar)</h3>
+    <table class="log-table">
+      <thead><tr><th>Data</th><th>Matéria</th><th>Assunto/Tópico</th><th>Atividade</th><th>Horas</th><th>Questões</th><th>Erros</th><th>Aproveitamento</th><th>Observações</th><th></th></tr></thead>
+      <tbody id="log-table-body"></tbody>
+    </table>
+    <div id="log-empty" class="empty-note" style="display:none;">Nenhum registro ainda. Adicione o primeiro acima.</div>
+
+    <hr class="sep">
+    <h3 style="font-size:14px;margin-bottom:6px;">Resumo por matéria e tópico</h3>
+    <table class="log-table">
+      <thead><tr><th>Matéria</th><th>Assunto/Tópico</th><th>Horas</th><th>Questões</th><th>Acertos</th><th>Aproveitamento</th></tr></thead>
+      <tbody id="log-summary-body"></tbody>
+    </table>
+  </div>
+
+  <!-- ===== TIMER TAB ===== -->
+  <div class="tab-panel" id="panel-timer">
+    <h2 class="section-title">Cronômetro de Estudos</h2>
+    <p class="section-sub">Cronometre uma sessão em tempo real ou lance o tempo manualmente — tudo entra automaticamente no seu histórico de Tempo de Estudos, separado por matéria, assunto e atividade.</p>
+    <div class="cycle-grid">
+      <div class="card" style="padding:18px;">
+        <div class="field-row">
+          <div class="field"><label>Matéria</label><select id="timer-subject"></select></div>
+          <div class="field"><label>Assunto/Tópico</label><select id="timer-topic"></select></div>
+        </div>
+        <div class="field-row">
+          <div class="field" style="flex:1;">
+            <label>Atividade</label>
+            <select id="timer-activity"></select>
+          </div>
+        </div>
+        <button class="btn small" id="toggle-activities" type="button">⚙ Gerenciar atividades</button>
+        <div id="activities-manager" style="display:none;margin-top:10px;padding:10px;background:var(--surface-2);border-radius:8px;"></div>
+
+        <div class="timer-box">
+          <div class="timer-num" id="timer-display">00:00:00</div>
+          <div class="timer-state" id="timer-status">Parado</div>
+        </div>
+        <div class="timer-controls">
+          <button class="btn primary" id="timer-start">Iniciar</button>
+          <button class="btn" id="timer-pause" disabled>Pausar</button>
+          <button class="btn gold" id="timer-save" disabled>Salvar sessão</button>
+          <button class="btn danger" id="timer-discard" disabled>Descartar</button>
+        </div>
+
+        <div class="field" style="margin-top:14px;">
+          <label>Observações (o que foi feito/lido)</label>
+          <textarea id="timer-notes" rows="2" placeholder="Ex: Li o capítulo de Controle de Constitucionalidade e revisei 20 questões da VUNESP."></textarea>
+        </div>
+
+        <hr class="sep">
+        <h3 style="font-size:14px;margin-top:0;">Adicionar tempo manualmente</h3>
+        <div class="field-row">
+          <div class="field"><label>Data</label><input type="date" id="tm-date"></div>
+          <div class="field"><label>Horas (00:00h)</label><input type="text" id="tm-hours" placeholder="01:00"></div>
+          <div class="field" style="display:flex;align-items:flex-end;"><button class="btn primary" id="tm-add" style="width:100%;">+ Adicionar</button></div>
+        </div>
+        <p class="section-sub" style="margin-bottom:0;font-size:11.5px;">Usa a matéria, o assunto, a atividade e as observações preenchidas acima.</p>
+      </div>
+      <div class="card" style="padding:18px;">
+        <h3 style="margin-top:0;font-size:14px;">Tempo total por matéria</h3>
+        <div id="timer-subject-bars"></div>
+        <hr class="sep">
+        <h3 style="font-size:14px;">Tempo total por matéria e assunto</h3>
+        <table class="log-table">
+          <thead><tr><th>Matéria</th><th>Assunto/Tópico</th><th>Tempo total</th></tr></thead>
+          <tbody id="timer-topic-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== MODAL: topic add/edit ===== -->
+<div class="overlay" id="modal-topic">
+  <div class="modal">
+    <h3 id="modal-topic-title">Adicionar tópico</h3>
+    <div class="field"><label>Matéria</label><select id="mt-subject"></select></div>
+    <div class="field"><label>Assunto</label><input type="text" id="mt-name" placeholder="Ex: Controle de Constitucionalidade"></div>
+    <div class="field-row">
+      <div class="field"><label>Importância</label><select id="mt-importance"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></div>
+      <div class="field"><label>Semana</label><select id="mt-week"></select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Dia</label>
+        <select id="mt-day">
+          <option value="mon">Segunda</option><option value="tue">Terça</option><option value="wed">Quarta</option>
+          <option value="thu">Quinta</option><option value="fri">Sexta</option><option value="sat">Sábado</option>
+        </select>
+      </div>
+      <div class="field"><label>Status</label><select id="mt-status"><option value="iniciado">Iniciado</option><option value="revisar">Revisar</option><option value="finalizado">Finalizado</option></select></div>
+    </div>
+    <div class="field"><label>Como pretende concluir</label><select id="mt-method"><option value="questoes">Questões</option><option value="aula">Aula</option><option value="leitura">Leitura</option></select></div>
+    <div class="modal-actions">
+      <button class="btn" id="mt-cancel">Cancelar</button>
+      <button class="btn primary" id="mt-save">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: subject add/edit ===== -->
+<div class="overlay" id="modal-subject">
+  <div class="modal">
+    <h3 id="modal-subject-title">Adicionar matéria</h3>
+    <div class="field"><label>Nome da matéria</label><input type="text" id="ms-name" placeholder="Ex: Direito Eleitoral"></div>
+    <div class="field-row">
+      <div class="field"><label>Cor</label><input type="color" id="ms-color" value="#2B59C3"></div>
+      <div class="field"><label>Ciclo</label><select id="ms-cycle"><option value="base">Base</option><option value="adaptativo">Adaptativo</option></select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Incidência PGE</label><select id="ms-pge"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option><option value="-">—</option></select></div>
+      <div class="field"><label>Incidência TRT</label><select id="ms-trt"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option><option value="-">—</option></select></div>
+      <div class="field"><label>Incidência TRF</label><select id="ms-trf"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option><option value="-">—</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="ms-cancel">Cancelar</button>
+      <button class="btn primary" id="ms-save">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: add topic-to-subject (library) ===== -->
+<div class="overlay" id="modal-subtopic">
+  <div class="modal">
+    <h3>Adicionar assunto à matéria</h3>
+    <input type="hidden" id="mst-subject-id">
+    <div class="field"><label>Assunto</label><input type="text" id="mst-name" placeholder="Ex: Súmulas do STJ sobre o tema"></div>
+    <div class="field"><label>Importância</label><select id="mst-importance"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></div>
+    <div class="modal-actions">
+      <button class="btn" id="mst-cancel">Cancelar</button>
+      <button class="btn primary" id="mst-save">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: week edit/delete ===== -->
+<div class="overlay" id="modal-week">
+  <div class="modal" style="max-width:380px;">
+    <h3>Editar semana</h3>
+    <div class="field"><label>Nota / título da semana (opcional)</label><input type="text" id="mw-label" placeholder="Ex: Aguardando edital TJSP"></div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn danger" id="mw-delete">Excluir semana</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" id="mw-cancel">Cancelar</button>
+        <button class="btn primary" id="mw-save">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: confirm delete ===== -->
+<div class="overlay" id="modal-confirm">
+  <div class="modal" style="max-width:360px;">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirm-text" style="color:var(--ink-soft);font-size:13px;">Tem certeza que deseja excluir este item? Essa ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button class="btn" id="confirm-cancel">Cancelar</button>
+      <button class="btn danger" id="confirm-ok">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Salvo automaticamente</div>
+
+<script>
+/* =========================================================================
+   DATA — biblioteca de matérias e assuntos
+   ========================================================================= */
+const SUBJECT_LIBRARY = [
+  {id:'const', name:'Direito Constitucional', color:'#2B59C3', cycle:'base',
+    incid:{PGE:'alta', TRT:'alta', TRF:'alta'},
+    topics:[
+      {name:'Teoria da Constituição, Constitucionalismo e Hermenêutica Constitucional', importance:'media'},
+      {name:'Controle de Constitucionalidade (difuso, concentrado, ADI, ADC, ADPF)', importance:'alta'},
+      {name:'Princípios Fundamentais e Direitos e Garantias Fundamentais', importance:'alta'},
+      {name:'Remédios Constitucionais (MS, HC, HD, MI, Ação Popular)', importance:'alta'},
+      {name:'Organização do Estado: Federação, União, Estados e Municípios', importance:'media'},
+      {name:'Organização dos Poderes: Legislativo, Executivo e Judiciário', importance:'alta'},
+      {name:'Funções Essenciais à Justiça (MP, Advocacia Pública, Defensoria)', importance:'alta'},
+      {name:'Tributação, Orçamento, Ordem Econômica e Ordem Social na CF', importance:'media'},
+      {name:'Constituição do Estado de São Paulo', importance:'media'},
+      {name:'Súmulas Vinculantes e Repercussão Geral', importance:'media'},
+    ]},
+  {id:'adm', name:'Direito Administrativo', color:'#1F8A70', cycle:'base',
+    incid:{PGE:'alta', TRT:'media', TRF:'alta'},
+    topics:[
+      {name:'Regime Jurídico-Administrativo e Princípios da Administração Pública', importance:'alta'},
+      {name:'Organização Administrativa: direta, indireta e entes de colaboração', importance:'media'},
+      {name:'Atos Administrativos: elementos, atributos, espécies e extinção', importance:'alta'},
+      {name:'Processo Administrativo e Controle da Administração Pública', importance:'alta'},
+      {name:'Poder de Polícia, Poder Normativo e Poderes da Administração', importance:'media'},
+      {name:'Licitações e Contratos Administrativos (Lei 14.133/2021)', importance:'alta'},
+      {name:'Serviços Públicos: concessão, permissão e autorização', importance:'media'},
+      {name:'Bens Públicos, Intervenção na Propriedade e Desapropriação', importance:'media'},
+      {name:'Responsabilidade Civil do Estado', importance:'alta'},
+      {name:'Improbidade Administrativa e Lei de Abuso de Autoridade', importance:'alta'},
+      {name:'Agentes Públicos e Regime Disciplinar (Lei 8.112/90 / Estatuto Estadual)', importance:'media'},
+      {name:'Governança, Gestão por Processos e Gestão Estratégica no Setor Público', importance:'baixa'},
+    ]},
+  {id:'pc', name:'Direito Processual Civil', color:'#D97B29', cycle:'base',
+    incid:{PGE:'alta', TRT:'alta', TRF:'alta'},
+    topics:[
+      {name:'Normas Fundamentais, Jurisdição e Competência', importance:'alta'},
+      {name:'Partes, Litisconsórcio e Intervenção de Terceiros', importance:'media'},
+      {name:'Atos Processuais, Prazos, Nulidades e Comunicação dos Atos', importance:'media'},
+      {name:'Tutela Provisória: urgência e evidência', importance:'alta'},
+      {name:'Procedimento Comum: petição inicial, contestação e saneamento', importance:'alta'},
+      {name:'Provas: teoria geral e espécies', importance:'media'},
+      {name:'Sentença, Coisa Julgada e Liquidação de Sentença', importance:'alta'},
+      {name:'Cumprimento de Sentença e Processo de Execução', importance:'alta'},
+      {name:'Recursos e Processo nos Tribunais (IRDR, Recursos Repetitivos)', importance:'alta'},
+      {name:'Processo Coletivo e Ações Constitucionais (MS, ACP, Ação Popular)', importance:'media'},
+      {name:'Fazenda Pública em Juízo, Precatórios e Execução Fiscal', importance:'alta'},
+      {name:'Juizados Especiais Cíveis e da Fazenda Pública', importance:'baixa'},
+    ]},
+  {id:'civil', name:'Direito Civil', color:'#8E3B6D', cycle:'base',
+    incid:{PGE:'alta', TRT:'media', TRF:'media'},
+    topics:[
+      {name:'LINDB, Eficácia e Aplicação da Lei no Tempo', importance:'media'},
+      {name:'Pessoas Naturais e Jurídicas; Direitos da Personalidade', importance:'media'},
+      {name:'Bens e Bens Públicos', importance:'media'},
+      {name:'Negócio Jurídico, Atos Ilícitos, Prescrição e Decadência', importance:'alta'},
+      {name:'Direito das Obrigações: modalidades e adimplemento', importance:'media'},
+      {name:'Teoria Geral dos Contratos e Contratos em Espécie', importance:'alta'},
+      {name:'Responsabilidade Civil (subjetiva, objetiva e do Estado)', importance:'alta'},
+      {name:'Posse e Direitos Reais (propriedade, condomínio, garantias)', importance:'media'},
+      {name:'Direito de Família e Sucessões (panorama geral)', importance:'baixa'},
+    ]},
+  {id:'trib', name:'Direito Tributário', color:'#B08900', cycle:'base',
+    incid:{PGE:'alta', TRT:'-', TRF:'baixa'},
+    topics:[
+      {name:'Teoria Geral do Tributo e Espécies Tributárias', importance:'alta'},
+      {name:'Sistema Constitucional Tributário e Competência Tributária', importance:'alta'},
+      {name:'Obrigação Tributária: sujeitos, fato gerador e responsabilidade', importance:'alta'},
+      {name:'Crédito Tributário: lançamento, suspensão, extinção e exclusão', importance:'alta'},
+      {name:'Garantias, Privilégios e Administração Tributária', importance:'media'},
+      {name:'Processo Tributário Administrativo e Judicial; Execução Fiscal', importance:'alta'},
+    ]},
+  {id:'fin', name:'Direito Financeiro, Econômico e Empresarial Público', color:'#6B4F3B', cycle:'base',
+    incid:{PGE:'media', TRT:'-', TRF:'-'},
+    topics:[
+      {name:'Orçamento Público, Lei de Responsabilidade Fiscal e Tramitação Orçamentária', importance:'media'},
+      {name:'Receita e Despesa Pública; Endividamento', importance:'media'},
+      {name:'Ordem Econômica, Regulação e Agências Reguladoras', importance:'media'},
+      {name:'Sociedades Estatais, Mercado de Capitais e Recuperação de Empresas', importance:'baixa'},
+    ]},
+  {id:'amb', name:'Direito Ambiental', color:'#2E7D4F', cycle:'base',
+    incid:{PGE:'media', TRT:'-', TRF:'-'},
+    topics:[
+      {name:'Princípios e Política Nacional do Meio Ambiente (PNMA)', importance:'alta'},
+      {name:'Licenciamento e Responsabilidade Ambiental (administrativa, civil, penal)', importance:'alta'},
+      {name:'Unidades de Conservação (SNUC) e Recursos Florestais', importance:'media'},
+      {name:'Recursos Hídricos e Mudança do Clima', importance:'media'},
+      {name:'Tutela Processual do Meio Ambiente (ACP, TAC)', importance:'media'},
+    ]},
+  {id:'dh', name:'Direitos Humanos', color:'#C2467A', cycle:'base',
+    incid:{PGE:'media', TRT:'baixa', TRF:'baixa'},
+    topics:[
+      {name:'Fundamentos e Classificação dos Direitos Humanos', importance:'media'},
+      {name:'Sistema Global de Proteção (ONU) e Tratados Internacionais', importance:'media'},
+      {name:'Sistema Interamericano de Direitos Humanos', importance:'alta'},
+      {name:'Grupos Vulneráveis e Direito Antidiscriminatório', importance:'media'},
+      {name:'Brasil e Direitos Humanos; Casos na Corte Interamericana', importance:'baixa'},
+    ]},
+  {id:'filo', name:'Filosofia do Direito e Sociologia Jurídica', color:'#5B5F97', cycle:'base',
+    incid:{PGE:'baixa', TRT:'-', TRF:'-'},
+    topics:[
+      {name:'Bobbio: Estado, Governo e Sociedade', importance:'alta'},
+      {name:'Bobbio: Direita e Esquerda', importance:'media'},
+      {name:'Luhmann: O Direito como Sistema Autopoiético', importance:'alta'},
+      {name:'Villas Bôas Filho: Pluralismo Jurídico e Governança', importance:'media'},
+      {name:'Foucault: A Sociedade Punitiva', importance:'alta'},
+    ]},
+  {id:'trab', name:'Direito do Trabalho e Processo do Trabalho', color:'#C0392B', cycle:'adaptativo',
+    incid:{PGE:'-', TRT:'alta', TRF:'baixa'},
+    topics:[
+      {name:'Relação de Emprego e Contrato Individual de Trabalho', importance:'alta'},
+      {name:'Duração do Trabalho, Salário e Normas de Tutela', importance:'alta'},
+      {name:'Normas Especiais: trabalho da mulher e do menor', importance:'media'},
+      {name:'Direito Coletivo: sindicatos, convenções e greve', importance:'media'},
+      {name:'Administração Pública e Relações de Emprego', importance:'media'},
+      {name:'Processo do Trabalho: competência e procedimento', importance:'alta'},
+      {name:'Execução Trabalhista e a Fazenda Pública na Justiça do Trabalho', importance:'media'},
+    ]},
+  {id:'prev', name:'Direito Previdenciário', color:'#1A9E94', cycle:'adaptativo',
+    incid:{PGE:'baixa', TRT:'baixa', TRF:'media'},
+    topics:[
+      {name:'Seguridade Social: conceito, princípios e organização', importance:'alta'},
+      {name:'Regime Geral de Previdência Social: beneficiários e benefícios', importance:'alta'},
+      {name:'Previdência do Servidor Público (RPPS)', importance:'media'},
+      {name:'Previdência Complementar (RPC e Funpresp)', importance:'baixa'},
+    ]},
+  {id:'penal', name:'Direito Penal e Processual Penal', color:'#34303A', cycle:'adaptativo',
+    incid:{PGE:'-', TRT:'-', TRF:'media'},
+    topics:[
+      {name:'Princípios, Aplicação da Lei Penal e Teoria do Crime', importance:'media'},
+      {name:'Crimes contra a Administração Pública e o Patrimônio', importance:'alta'},
+      {name:'Crimes de Lavagem de Dinheiro e Organização Criminosa', importance:'baixa'},
+      {name:'Inquérito Policial, Prisão e Medidas Cautelares', importance:'media'},
+      {name:'Recursos em Processo Penal e Habeas Corpus', importance:'media'},
+      {name:'Competência Penal da Justiça Federal', importance:'media'},
+    ]},
+  {id:'port', name:'Língua Portuguesa', color:'#3C8DBC', cycle:'adaptativo',
+    incid:{PGE:'-', TRT:'alta', TRF:'alta'},
+    topics:[
+      {name:'Compreensão e Interpretação de Textos', importance:'alta'},
+      {name:'Ortografia, Acentuação e Emprego do Sinal de Crase', importance:'media'},
+      {name:'Morfossintaxe: Concordância e Regência Verbal/Nominal', importance:'alta'},
+      {name:'Pontuação, Coesão Textual e Redação Oficial', importance:'media'},
+    ]},
+  {id:'rlm', name:'Raciocínio Lógico-Matemático', color:'#5C4D9E', cycle:'adaptativo',
+    incid:{PGE:'-', TRT:'media', TRF:'media'},
+    topics:[
+      {name:'Estruturas Lógicas e Proposições', importance:'alta'},
+      {name:'Raciocínio Sequencial, Orientação Espacial e Temporal', importance:'media'},
+      {name:'Proporcionalidade, Porcentagem e Regra de Três', importance:'alta'},
+    ]},
+  {id:'pcd', name:'Noções sobre o Direito das Pessoas com Deficiência', color:'#9B59B6', cycle:'adaptativo',
+    incid:{PGE:'-', TRT:'baixa', TRF:'baixa'},
+    topics:[
+      {name:'Lei Brasileira de Inclusão (Lei 13.146/2015) e Acessibilidade', importance:'media'},
+      {name:'Resolução CNJ nº 401/2021 e Normas de Atendimento Prioritário', importance:'baixa'},
+    ]},
+  {id:'red', name:'Redação, Peça Processual e Parecer', color:'#A6790A', cycle:'redacao',
+    incid:{PGE:'alta', TRT:'media', TRF:'media'},
+    topics:[
+      {name:'Peça Processual: petição inicial e recursos (Processual Civil)', importance:'alta'},
+      {name:'Parecer Jurídico (Direito Administrativo)', importance:'alta'},
+      {name:'Questões Discursivas: Constitucional e Tributário', importance:'media'},
+      {name:'Questões Discursivas: Civil, Ambiental e Trabalho', importance:'media'},
+      {name:'Redação Dissertativa-Argumentativa (estilo FCC/Tribunais)', importance:'media'},
+      {name:'Estudo de Caso (estilo FCC — Analista Judiciário)', importance:'alta'},
+    ]},
+];
+
+const DAY_LABELS = {mon:'Segunda', tue:'Terça', wed:'Quarta', thu:'Quinta', fri:'Sexta', sat:'Sábado'};
+const DAY_ORDER = ['mon','tue','wed','thu','fri','sat','sun'];
+const IMPORTANCE_LABEL = {alta:'Alta', media:'Média', baixa:'Baixa'};
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+let STATE = null;
+let saveTimer = null;
+let currentWeekId = 1;
+let currentView = 'days';
+let editingTopicId = null;
+let editingSubjectId = null;
+let confirmCallback = null;
+let openSubjectIds = new Set();
+
+function defaultExamDate(){
+  const d = new Date(); d.setMonth(d.getMonth()+6);
+  return d.toISOString().slice(0,10);
+}
+
+function buildInitialState(){
+  const subjects = SUBJECT_LIBRARY.map(s=>({
+    id:s.id, name:s.name, color:s.color, cycle:s.cycle, incid:{...s.incid},
+    topics: s.topics.map(t=>({name:t.name, importance:t.importance, questoes:0, acertos:0, done:false}))
+  }));
+  const idxTrack = {}; subjects.forEach(s=>idxTrack[s.id]=0);
+  let nextId = 1;
+  const topics = [];
+
+  function pick(subjId, week, day){
+    const subj = subjects.find(s=>s.id===subjId);
+    if(!subj || subj.topics.length===0) return;
+    const i = idxTrack[subjId] % subj.topics.length;
+    const pass = Math.floor(idxTrack[subjId] / subj.topics.length) + 1;
+    const t = subj.topics[i];
+    idxTrack[subjId]++;
+    const name = pass>1 ? `${t.name} (Revisão ${pass-1})` : t.name;
+    topics.push({id:nextId++, subjectId:subjId, name, importance:t.importance, week, day, status:'iniciado', method:'questoes'});
+  }
+
+  const weeks = [];
+  for(let w=1; w<=24; w++) weeks.push({id:w, label:'', isFinal:false});
+  weeks.push({id:25, label:'', isFinal:true});
+
+  const adaptiveOrder = ['trab','prev','penal','port','rlm','pcd'];
+  for(let w=1; w<=24; w++){
+    pick('const', w, 'mon'); pick('adm', w, 'mon');
+    pick('pc', w, 'tue'); pick('civil', w, 'tue');
+    pick('trib', w, 'wed'); pick(w%2===0?'fin':'amb', w, 'wed');
+    pick(adaptiveOrder[(w-1) % adaptiveOrder.length], w, 'thu'); pick('adm', w, 'thu');
+    pick(w%2===0?'dh':'filo', w, 'fri'); pick('const', w, 'fri');
+    pick('red', w, 'sat');
+  }
+  const reviewDays = ['mon','tue','wed','thu','fri','sat'];
+  const allIds = subjects.map(s=>s.id);
+  allIds.forEach((sid, i)=>{
+    const day = reviewDays[i % reviewDays.length];
+    const subj = subjects.find(s=>s.id===sid);
+    topics.push({id:nextId++, subjectId:sid, name:`Revisão final geral — ${subj.name}`, importance:'alta', week:25, day, status:'iniciado', method:'questoes'});
+  });
+
+  return { examDate: defaultExamDate(), subjects, topics, nextId, weeks, nextWeekId:26, logs: [], activities:['Teoria','Questões','Lei Seca','Revisão'] };
+}
+
+/* ---- storage (works inside Claude.ai artifacts AND as standalone local file) ---- */
+async function loadState(){
+  try{
+    if(window.storage){
+      const r = await window.storage.get('pge_trf_plan_state');
+      if(r && r.value) return JSON.parse(r.value);
+      return null;
+    } else {
+      const raw = localStorage.getItem('pge_trf_plan_state');
+      return raw ? JSON.parse(raw) : null;
+    }
+  }catch(e){ return null; }
+}
+async function persistState(){
+  try{
+    const data = JSON.stringify(STATE);
+    if(window.storage){ await window.storage.set('pge_trf_plan_state', data); }
+    else{ localStorage.setItem('pge_trf_plan_state', data); }
+    showToast('Salvo automaticamente');
+  }catch(e){ console.error('Falha ao salvar', e); }
+}
+function saveState(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(persistState, 400);
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1600);
+}
+
+/* =========================================================================
+   HELPERS
+   ========================================================================= */
+function subjectById(id){ return STATE.subjects.find(s=>s.id===id); }
+function topicsForWeek(weekId){ return STATE.topics.filter(t=>t.week===weekId); }
+function topicsForWeekDay(weekId, day){ return STATE.topics.filter(t=>t.week===weekId && t.day===day); }
+function escapeAttr(str){ return String(str==null?'':str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function hexToRgba(hex, alpha){
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+function importanceStamp(importance){ return `<span class="stamp ${importance}">${IMPORTANCE_LABEL[importance]}</span>`; }
+function subjectChip(subj){ return `<span class="chip" style="background:${subj.color}">${subj.name}</span>`; }
+function incidTag(level){
+  const map = {alta:'#A23E2E', media:'#A6791A', baixa:'#3E5C73', '-':'#9AA0AE'};
+  const c = map[level] || '#9AA0AE';
+  return `<span class="incid-tag" style="color:${c};border-color:${hexToRgba(c,.4)}">${level==='-'?'—':IMPORTANCE_LABEL[level]}</span>`;
+}
+function accuracyClass(pct){ if(pct < 70) return 'red'; if(pct <= 80) return 'amber'; return 'green'; }
+function minutesFromHHMM(str){ const m = /^(\d{1,3}):(\d{2})$/.exec((str||'').trim()); if(!m) return 0; return parseInt(m[1])*60 + parseInt(m[2]); }
+function hhmmFromMinutes(mins){ const h = Math.floor(mins/60), m = mins%60; return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'); }
+function activityOptionsHtml(selected){
+  let opts = STATE.activities.map(a=>`<option value="${escapeAttr(a)}" ${a===selected?'selected':''}>${a}</option>`).join('');
+  if(selected && !STATE.activities.includes(selected)) opts += `<option value="${escapeAttr(selected)}" selected>${selected}</option>`;
+  return opts;
+}
+function populateActivitySelect(selectEl, selected){
+  if(!selectEl) return;
+  selectEl.innerHTML = activityOptionsHtml(selected || STATE.activities[0] || '');
+}
+
+/* =========================================================================
+   WEEKS: display + CRUD
+   ========================================================================= */
+function weekDisplayLabel(w, idx){
+  let s = `Semana ${idx+1}`;
+  if(w.isFinal) s += ' (Revisão Final)';
+  if(w.label) s += ` — ${w.label}`;
+  return s;
+}
+function populateWeekOptions(selectEl, selectedId){
+  selectEl.innerHTML = STATE.weeks.map((w,idx)=>`<option value="${w.id}" ${w.id===selectedId?'selected':''}>${weekDisplayLabel(w,idx)}</option>`).join('');
+}
+function initWeekSelect(){
+  const sel = document.getElementById('week-select');
+  populateWeekOptions(sel, currentWeekId);
+  sel.onchange = ()=>{ currentWeekId = Number(sel.value); renderPlanning(); };
+}
+function addWeek(){
+  const newWeek = {id: STATE.nextWeekId++, label:'', isFinal:false};
+  const weeks = STATE.weeks;
+  if(weeks.length && weeks[weeks.length-1].isFinal) weeks.splice(weeks.length-1, 0, newWeek);
+  else weeks.push(newWeek);
+  currentWeekId = newWeek.id;
+  saveState(); initWeekSelect(); renderPlanning();
+  showToast('Semana adicionada ao planejamento');
+}
+function deleteWeek(id){
+  if(STATE.weeks.length<=1){ alert('Não é possível excluir a única semana do planejamento.'); return; }
+  const idx = STATE.weeks.findIndex(w=>w.id===id);
+  if(idx===-1) return;
+  const count = STATE.topics.filter(t=>t.week===id).length;
+  openConfirm(`Excluir esta semana${count?` e os ${count} tópico(s) planejados nela`:''}? Essa ação não pode ser desfeita.`, ()=>{
+    STATE.topics = STATE.topics.filter(t=>t.week!==id);
+    STATE.weeks.splice(idx,1);
+    const newIdx = Math.min(idx, STATE.weeks.length-1);
+    currentWeekId = STATE.weeks[newIdx].id;
+    saveState(); initWeekSelect(); renderPlanning();
+  });
+}
+document.getElementById('week-add').addEventListener('click', addWeek);
+document.getElementById('week-edit').addEventListener('click', ()=>{
+  const w = STATE.weeks.find(x=>x.id===currentWeekId);
+  document.getElementById('mw-label').value = w.label || '';
+  document.getElementById('modal-week').classList.add('show');
+});
+document.getElementById('mw-cancel').addEventListener('click', ()=> document.getElementById('modal-week').classList.remove('show'));
+document.getElementById('mw-save').addEventListener('click', ()=>{
+  const w = STATE.weeks.find(x=>x.id===currentWeekId);
+  w.label = document.getElementById('mw-label').value.trim();
+  document.getElementById('modal-week').classList.remove('show');
+  saveState(); initWeekSelect(); renderPlanning();
+});
+document.getElementById('mw-delete').addEventListener('click', ()=>{
+  document.getElementById('modal-week').classList.remove('show');
+  deleteWeek(currentWeekId);
+});
+
+/* =========================================================================
+   COUNTDOWN
+   ========================================================================= */
+function renderCountdown(){
+  document.getElementById('exam-date-input').value = STATE.examDate;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const exam = new Date(STATE.examDate+'T00:00:00');
+  const diffDays = Math.max(0, Math.round((exam-today)/86400000));
+  document.getElementById('cd-days').textContent = diffDays;
+  document.getElementById('cd-weeks').textContent = Math.floor(diffDays/7);
+}
+document.getElementById('exam-date-input').addEventListener('change', e=>{
+  STATE.examDate = e.target.value;
+  saveState(); renderCountdown();
+});
+
+/* =========================================================================
+   TABS
+   ========================================================================= */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='cycles') renderCycles();
+    if(btn.dataset.tab==='subjects') renderSubjects();
+    if(btn.dataset.tab==='stats') renderStats();
+    if(btn.dataset.tab==='time') renderTime();
+    if(btn.dataset.tab==='timer') renderTimerPanel();
+  });
+});
+
+document.getElementById('week-prev').addEventListener('click', ()=>{
+  const idx = STATE.weeks.findIndex(w=>w.id===currentWeekId);
+  if(idx>0){ currentWeekId = STATE.weeks[idx-1].id; document.getElementById('week-select').value=currentWeekId; renderPlanning(); }
+});
+document.getElementById('week-next').addEventListener('click', ()=>{
+  const idx = STATE.weeks.findIndex(w=>w.id===currentWeekId);
+  if(idx < STATE.weeks.length-1){ currentWeekId = STATE.weeks[idx+1].id; document.getElementById('week-select').value=currentWeekId; renderPlanning(); }
+});
+document.querySelectorAll('.view-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentView = btn.dataset.view;
+    document.getElementById('view-days').style.display = currentView==='days' ? '' : 'none';
+    document.getElementById('view-kanban').style.display = currentView==='kanban' ? '' : 'none';
+    renderPlanning();
+  });
+});
+
+/* =========================================================================
+   PLANNING — card rendering
+   ========================================================================= */
+function topicCardHTML(t){
+  const subj = subjectById(t.subjectId);
+  if(!subj) return '';
+  return `
+  <div class="topic-card" draggable="true" data-id="${t.id}">
+    <div class="tc-top">
+      ${subjectChip(subj)}
+      ${importanceStamp(t.importance)}
+    </div>
+    <div class="tc-name">${t.name}</div>
+    <div class="tc-foot">
+      <span class="status-pill" data-status="${t.status}" data-action="cycle-status" data-id="${t.id}">${t.status==='iniciado'?'Iniciado':t.status==='revisar'?'Revisar':'Finalizado'}</span>
+      <select class="method-select" data-action="set-method" data-id="${t.id}">
+        <option value="questoes" ${t.method==='questoes'?'selected':''}>Questões</option>
+        <option value="aula" ${t.method==='aula'?'selected':''}>Aula</option>
+        <option value="leitura" ${t.method==='leitura'?'selected':''}>Leitura</option>
+      </select>
+      <span class="tc-actions">
+        <button class="btn icon small" data-action="edit-topic" data-id="${t.id}" title="Editar">✎</button>
+        <button class="btn icon small" data-action="delete-topic" data-id="${t.id}" title="Excluir">🗑</button>
+      </span>
+    </div>
+  </div>`;
+}
+
+function renderPlanningDaysView(){
+  const wrap = document.getElementById('view-days');
+  let html = '<div class="days-grid">';
+  DAY_ORDER.forEach(day=>{
+    if(day==='sun'){
+      html += `<div class="day-col sunday"><div class="day-col-head"><h4>Domingo</h4></div><div class="day-col-body">Simulado completo + revisão dos erros da semana.</div></div>`;
+      return;
+    }
+    const items = topicsForWeekDay(currentWeekId, day);
+    html += `<div class="day-col" data-day="${day}">
+      <div class="day-col-head"><h4>${DAY_LABELS[day]}</h4><span style="font-size:11px;color:var(--ink-soft);">${items.length}</span></div>
+      <div class="day-col-body" data-day="${day}">
+        ${items.map(topicCardHTML).join('')}
+        <button class="add-card-btn" data-action="add-to-day" data-day="${day}">+ adicionar</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+  const idx = STATE.weeks.findIndex(w=>w.id===currentWeekId);
+  const w = STATE.weeks[idx];
+  document.getElementById('week-range').textContent = w ? (weekDisplayLabel(w, idx) + (w.isFinal ? ' — foco em revisão geral' : ` — ciclo de estudos (semana ${idx+1} de ${STATE.weeks.length})`)) : '';
+}
+
+function renderPlanningKanbanView(){
+  const wrap = document.getElementById('view-kanban');
+  const items = topicsForWeek(currentWeekId);
+  const cols = [
+    {key:'iniciado', label:'Iniciado'},
+    {key:'revisar', label:'Revisar'},
+    {key:'finalizado', label:'Finalizado'},
+  ];
+  let html = '<div class="kanban">';
+  cols.forEach(c=>{
+    const colItems = items.filter(t=>t.status===c.key);
+    html += `<div class="kanban-col">
+      <div class="kanban-col-head"><h4>${c.label}</h4><span class="kanban-count">${colItems.length}</span></div>
+      <div class="kanban-col-body" data-status="${c.key}">
+        ${colItems.map(topicCardHTML).join('')}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+}
+
+function renderPlanning(){
+  if(currentView==='days') renderPlanningDaysView();
+  else renderPlanningKanbanView();
+  attachPlanningEvents();
+}
+
+function attachPlanningEvents(){
+  document.querySelectorAll('[data-action="cycle-status"]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = parseInt(el.dataset.id);
+      const t = STATE.topics.find(x=>x.id===id);
+      const order = ['iniciado','revisar','finalizado'];
+      t.status = order[(order.indexOf(t.status)+1)%order.length];
+      saveState(); renderPlanning();
+    });
+  });
+  document.querySelectorAll('[data-action="set-method"]').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const id = parseInt(el.dataset.id);
+      const t = STATE.topics.find(x=>x.id===id);
+      t.method = el.value;
+      saveState();
+    });
+  });
+  document.querySelectorAll('[data-action="edit-topic"]').forEach(el=>{
+    el.addEventListener('click', ()=> openTopicModal(parseInt(el.dataset.id)));
+  });
+  document.querySelectorAll('[data-action="delete-topic"]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = parseInt(el.dataset.id);
+      openConfirm('Tem certeza que deseja excluir este tópico do planejamento?', ()=>{
+        STATE.topics = STATE.topics.filter(t=>t.id!==id);
+        saveState(); renderPlanning();
+      });
+    });
+  });
+  document.querySelectorAll('[data-action="add-to-day"]').forEach(el=>{
+    el.addEventListener('click', ()=> openTopicModal(null, {week:currentWeekId, day:el.dataset.day}));
+  });
+
+  document.querySelectorAll('.topic-card').forEach(card=>{
+    card.addEventListener('dragstart', e=>{ card.classList.add('dragging'); e.dataTransfer.setData('text/plain', card.dataset.id); });
+    card.addEventListener('dragend', ()=> card.classList.remove('dragging'));
+  });
+
+  if(currentView==='days'){
+    document.querySelectorAll('.day-col-body').forEach(col=>{
+      col.addEventListener('dragover', e=>{ e.preventDefault(); col.classList.add('drag-over'); });
+      col.addEventListener('dragleave', ()=> col.classList.remove('drag-over'));
+      col.addEventListener('drop', e=>{
+        e.preventDefault(); col.classList.remove('drag-over');
+        const id = parseInt(e.dataTransfer.getData('text/plain'));
+        const t = STATE.topics.find(x=>x.id===id);
+        if(t){ t.day = col.dataset.day; saveState(); renderPlanning(); }
+      });
+    });
+  } else {
+    document.querySelectorAll('.kanban-col-body').forEach(col=>{
+      col.addEventListener('dragover', e=>{ e.preventDefault(); col.classList.add('drag-over'); });
+      col.addEventListener('dragleave', ()=> col.classList.remove('drag-over'));
+      col.addEventListener('drop', e=>{
+        e.preventDefault(); col.classList.remove('drag-over');
+        const id = parseInt(e.dataTransfer.getData('text/plain'));
+        const t = STATE.topics.find(x=>x.id===id);
+        if(t){ t.status = col.dataset.status; saveState(); renderPlanning(); }
+      });
+    });
+  }
+}
+
+/* ---- topic modal ---- */
+function populateSubjectSelect(selectEl){ selectEl.innerHTML = STATE.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join(''); }
+function openTopicModal(id, presets){
+  editingTopicId = id;
+  populateSubjectSelect(document.getElementById('mt-subject'));
+  if(id){
+    const t = STATE.topics.find(x=>x.id===id);
+    document.getElementById('modal-topic-title').textContent = 'Editar tópico';
+    document.getElementById('mt-subject').value = t.subjectId;
+    populateWeekOptions(document.getElementById('mt-week'), t.week);
+    document.getElementById('mt-name').value = t.name;
+    document.getElementById('mt-importance').value = t.importance;
+    document.getElementById('mt-day').value = t.day;
+    document.getElementById('mt-status').value = t.status;
+    document.getElementById('mt-method').value = t.method;
+  } else {
+    document.getElementById('modal-topic-title').textContent = 'Adicionar tópico';
+    populateWeekOptions(document.getElementById('mt-week'), (presets && presets.week) || currentWeekId);
+    document.getElementById('mt-name').value = '';
+    document.getElementById('mt-importance').value = 'media';
+    document.getElementById('mt-day').value = (presets && presets.day) || 'mon';
+    document.getElementById('mt-status').value = 'iniciado';
+    document.getElementById('mt-method').value = 'questoes';
+  }
+  document.getElementById('modal-topic').classList.add('show');
+}
+document.getElementById('mt-cancel').addEventListener('click', ()=> document.getElementById('modal-topic').classList.remove('show'));
+document.getElementById('mt-save').addEventListener('click', ()=>{
+  const name = document.getElementById('mt-name').value.trim();
+  if(!name){ alert('Informe o nome do assunto.'); return; }
+  const data = {
+    subjectId: document.getElementById('mt-subject').value,
+    name,
+    importance: document.getElementById('mt-importance').value,
+    week: Number(document.getElementById('mt-week').value),
+    day: document.getElementById('mt-day').value,
+    status: document.getElementById('mt-status').value,
+    method: document.getElementById('mt-method').value,
+  };
+  if(editingTopicId){
+    const t = STATE.topics.find(x=>x.id===editingTopicId);
+    Object.assign(t, data);
+  } else {
+    data.id = STATE.nextId++;
+    STATE.topics.push(data);
+  }
+  document.getElementById('modal-topic').classList.remove('show');
+  saveState();
+  if(data.week !== currentWeekId){ currentWeekId = data.week; document.getElementById('week-select').value = currentWeekId; }
+  renderPlanning();
+});
+document.getElementById('btn-add-topic').addEventListener('click', ()=> openTopicModal(null, {week:currentWeekId, day:'mon'}));
+
+/* =========================================================================
+   CYCLES TAB
+   ========================================================================= */
+function renderCycles(){
+  const counts = {}; STATE.subjects.forEach(s=> counts[s.id]=0);
+  STATE.topics.forEach(t=>{ if(counts[t.subjectId]!==undefined) counts[t.subjectId]++; });
+  const total = STATE.topics.length || 1;
+  const sorted = STATE.subjects.slice().sort((a,b)=> counts[b.id]-counts[a.id]);
+
+  let barsHtml = '';
+  sorted.forEach(s=>{
+    const pct = Math.round((counts[s.id]/total)*100);
+    barsHtml += `<div class="bar-row">
+      <div class="bar-label"><span class="subject-dot" style="background:${s.color}"></span>${s.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+      <div class="bar-pct">${pct}%</div>
+    </div>`;
+  });
+  document.getElementById('cycle-bars').innerHTML = barsHtml;
+
+  let baseCount=0, adaptCount=0, redCount=0;
+  STATE.topics.forEach(t=>{
+    const s = subjectById(t.subjectId); if(!s) return;
+    if(s.cycle==='base') baseCount++;
+    else if(s.cycle==='adaptativo') adaptCount++;
+    else redCount++;
+  });
+  const tot = baseCount+adaptCount+redCount || 1;
+  const bp = Math.round(baseCount/tot*100), ap = Math.round(adaptCount/tot*100), rp = 100-bp-ap;
+  document.getElementById('split-bar').innerHTML = `
+    <div style="width:${bp}%;background:#1F8A70;">${bp}% Base</div>
+    <div style="width:${ap}%;background:#C0392B;">${ap}% Adaptativo</div>
+    <div style="width:${rp}%;background:#A6790A;">${rp}% Redação</div>`;
+}
+
+/* =========================================================================
+   SUBJECTS TAB
+   ========================================================================= */
+function topicAggregate(topics){
+  let q=0, a=0;
+  topics.forEach(t=>{ q += (t.questoes||0); a += (t.acertos||0); });
+  const pct = q>0 ? Math.round(a/q*100) : null;
+  return {q, a, pct};
+}
+
+function renderSubjects(){
+  const wrap = document.getElementById('subject-list');
+  wrap.innerHTML = STATE.subjects.map(s=>{
+    const agg = topicAggregate(s.topics);
+    const doneCount = s.topics.filter(t=>t.done).length;
+    const pctDone = s.topics.length ? Math.round(doneCount/s.topics.length*100) : 0;
+    return `<div class="subject-card">
+      <div class="subject-head" data-action="toggle-subject" data-id="${s.id}">
+        <div class="subject-head-left">
+          <span class="subject-dot" style="background:${s.color}"></span>
+          <h3>${s.name}</h3>
+          <div class="incid-row">${incidTag(s.incid.PGE)} <span style="font-size:9.5px;color:var(--ink-soft);">PGE</span>
+            ${incidTag(s.incid.TRT)} <span style="font-size:9.5px;color:var(--ink-soft);">TRT</span>
+            ${incidTag(s.incid.TRF)} <span style="font-size:9.5px;color:var(--ink-soft);">TRF</span>
+          </div>
+        </div>
+        <div class="subject-head-progress">
+          <div class="mini-track"><div class="mini-fill" style="width:${pctDone}%;background:${s.color}"></div></div>
+          <span style="font-size:11px;color:var(--ink-soft);white-space:nowrap;">${doneCount}/${s.topics.length} concluídos</span>
+          <span style="font-size:11px;color:var(--ink-soft);">▾</span>
+        </div>
+      </div>
+      <div class="subject-body" id="subj-body-${s.id}">
+        <div class="subject-total-bar" style="flex-direction:column;align-items:stretch;gap:7px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="flex-shrink:0;">Checklist do edital: <strong>${doneCount}/${s.topics.length}</strong></span>
+            <div class="bar-track" style="flex:1;"><div class="bar-fill" style="width:${pctDone}%;background:${s.color}"></div></div>
+            <span class="acc ${accuracyClass(pctDone)}" style="flex-shrink:0;">${pctDone}%</span>
+          </div>
+          <div>Questões: <strong>${agg.q}</strong> · Acertos: <strong>${agg.a}</strong> ${agg.pct===null?'':`· <span class="acc ${accuracyClass(agg.pct)}">${agg.pct}%</span>`}</div>
+        </div>
+        ${s.topics.map((t,i)=>{
+          const pct = (t.questoes||0)>0 ? Math.round((t.acertos||0)/t.questoes*100) : null;
+          return `<div class="topic-row ${t.done?'done':''}" data-sid="${s.id}" data-idx="${i}">
+            <input type="checkbox" class="trow-done" data-sid="${s.id}" data-idx="${i}" ${t.done?'checked':''} style="accent-color:${s.color}" title="Marcar como concluído">
+            <input class="trow-name" type="text" value="${escapeAttr(t.name)}" data-field="name" data-sid="${s.id}" data-idx="${i}">
+            <select class="trow-importance" data-field="importance" data-sid="${s.id}" data-idx="${i}">
+              <option value="alta" ${t.importance==='alta'?'selected':''}>Alta</option>
+              <option value="media" ${t.importance==='media'?'selected':''}>Média</option>
+              <option value="baixa" ${t.importance==='baixa'?'selected':''}>Baixa</option>
+            </select>
+            <div class="trow-stats">
+              <input type="number" min="0" class="trow-num" data-field="questoes" data-sid="${s.id}" data-idx="${i}" value="${t.questoes||0}" title="Questões respondidas">
+              <span>/</span>
+              <input type="number" min="0" class="trow-num" data-field="acertos" data-sid="${s.id}" data-idx="${i}" value="${t.acertos||0}" title="Acertos">
+              <span class="acc ${pct===null?'':accuracyClass(pct)}" style="min-width:34px;display:inline-block;text-align:right;">${pct===null?'—':pct+'%'}</span>
+            </div>
+            <button class="btn icon small" data-action="delete-subtopic" data-sid="${s.id}" data-idx="${i}" title="Excluir">🗑</button>
+          </div>`;
+        }).join('')}
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn small" data-action="add-subtopic" data-sid="${s.id}">+ adicionar assunto</button>
+          <button class="btn small" data-action="edit-subject" data-sid="${s.id}">✎ editar matéria</button>
+          <button class="btn small danger" data-action="delete-subject" data-sid="${s.id}">excluir matéria</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('[data-action="toggle-subject"]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.id;
+      const body = document.getElementById('subj-body-'+id);
+      body.classList.toggle('open');
+      if(body.classList.contains('open')) openSubjectIds.add(id); else openSubjectIds.delete(id);
+    });
+  });
+  openSubjectIds.forEach(id=>{
+    const body = document.getElementById('subj-body-'+id);
+    if(body) body.classList.add('open');
+  });
+
+  document.querySelectorAll('[data-action="add-subtopic"]').forEach(el=>{
+    el.addEventListener('click', e=>{ e.stopPropagation(); openSubtopicModal(el.dataset.sid); });
+  });
+  document.querySelectorAll('[data-action="delete-subtopic"]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      const sid = el.dataset.sid, idx = parseInt(el.dataset.idx);
+      openConfirm('Excluir este assunto da matéria?', ()=>{
+        subjectById(sid).topics.splice(idx,1);
+        saveState(); renderSubjects();
+      });
+    });
+  });
+  document.querySelectorAll('[data-action="edit-subject"]').forEach(el=>{
+    el.addEventListener('click', e=>{ e.stopPropagation(); openSubjectModal('edit', el.dataset.sid); });
+  });
+  document.querySelectorAll('[data-action="delete-subject"]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      const sid = el.dataset.sid;
+      openConfirm('Excluir esta matéria e todos os tópicos já planejados para ela? Essa ação não pode ser desfeita.', ()=>{
+        STATE.subjects = STATE.subjects.filter(s=>s.id!==sid);
+        STATE.topics = STATE.topics.filter(t=>t.subjectId!==sid);
+        saveState(); renderSubjects(); renderPlanning();
+      });
+    });
+  });
+
+  // checklist toggle
+  document.querySelectorAll('.trow-done').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const s = subjectById(el.dataset.sid); const t = s.topics[parseInt(el.dataset.idx)];
+      t.done = el.checked;
+      saveState(); renderSubjects(); renderStats();
+    });
+  });
+  // inline editable topic fields
+  document.querySelectorAll('.trow-name').forEach(el=>{
+    el.addEventListener('blur', ()=>{
+      const s = subjectById(el.dataset.sid); const t = s.topics[parseInt(el.dataset.idx)];
+      const v = el.value.trim();
+      if(v && v!==t.name){ t.name = v; saveState(); }
+    });
+  });
+  document.querySelectorAll('.trow-importance').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const s = subjectById(el.dataset.sid); const t = s.topics[parseInt(el.dataset.idx)];
+      t.importance = el.value; saveState();
+    });
+  });
+  document.querySelectorAll('.trow-num').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const s = subjectById(el.dataset.sid); const t = s.topics[parseInt(el.dataset.idx)];
+      let v = Math.max(0, parseInt(el.value||'0'));
+      t[el.dataset.field] = v;
+      if(t.acertos > t.questoes) t.acertos = t.questoes;
+      saveState(); renderSubjects();
+    });
+  });
+}
+
+function openSubtopicModal(sid){
+  document.getElementById('mst-subject-id').value = sid;
+  document.getElementById('mst-name').value = '';
+  document.getElementById('mst-importance').value = 'media';
+  document.getElementById('modal-subtopic').classList.add('show');
+}
+document.getElementById('mst-cancel').addEventListener('click', ()=> document.getElementById('modal-subtopic').classList.remove('show'));
+document.getElementById('mst-save').addEventListener('click', ()=>{
+  const name = document.getElementById('mst-name').value.trim();
+  if(!name){ alert('Informe o assunto.'); return; }
+  const sid = document.getElementById('mst-subject-id').value;
+  subjectById(sid).topics.push({name, importance: document.getElementById('mst-importance').value, questoes:0, acertos:0, done:false});
+  openSubjectIds.add(sid);
+  document.getElementById('modal-subtopic').classList.remove('show');
+  saveState(); renderSubjects();
+});
+
+/* ---- add / edit subject modal ---- */
+function openSubjectModal(mode, sid){
+  editingSubjectId = mode==='edit' ? sid : null;
+  if(mode==='edit'){
+    const s = subjectById(sid);
+    document.getElementById('modal-subject-title').textContent = 'Editar matéria';
+    document.getElementById('ms-name').value = s.name;
+    document.getElementById('ms-color').value = s.color;
+    document.getElementById('ms-cycle').value = s.cycle==='adaptativo' ? 'adaptativo' : 'base';
+    document.getElementById('ms-pge').value = s.incid.PGE;
+    document.getElementById('ms-trt').value = s.incid.TRT;
+    document.getElementById('ms-trf').value = s.incid.TRF;
+  } else {
+    document.getElementById('modal-subject-title').textContent = 'Adicionar matéria';
+    document.getElementById('ms-name').value = '';
+    document.getElementById('ms-color').value = '#2B59C3';
+    document.getElementById('ms-cycle').value = 'base';
+    document.getElementById('ms-pge').value = 'media';
+    document.getElementById('ms-trt').value = 'media';
+    document.getElementById('ms-trf').value = 'media';
+  }
+  document.getElementById('modal-subject').classList.add('show');
+}
+document.getElementById('btn-add-subject').addEventListener('click', ()=> openSubjectModal('add'));
+document.getElementById('ms-cancel').addEventListener('click', ()=> document.getElementById('modal-subject').classList.remove('show'));
+document.getElementById('ms-save').addEventListener('click', ()=>{
+  const name = document.getElementById('ms-name').value.trim();
+  if(!name){ alert('Informe o nome da matéria.'); return; }
+  const fields = {
+    name, color: document.getElementById('ms-color').value, cycle: document.getElementById('ms-cycle').value,
+    incid:{PGE:document.getElementById('ms-pge').value, TRT:document.getElementById('ms-trt').value, TRF:document.getElementById('ms-trf').value},
+  };
+  if(editingSubjectId){
+    Object.assign(subjectById(editingSubjectId), fields);
+  } else {
+    STATE.subjects.push({id:'custom_'+Date.now(), ...fields, topics:[]});
+  }
+  document.getElementById('modal-subject').classList.remove('show');
+  saveState(); renderSubjects(); renderTime();
+});
+
+/* =========================================================================
+   STATS TAB
+   ========================================================================= */
+function progressCardHTML(s){
+  const items = STATE.topics.filter(t=>t.subjectId===s.id);
+  const done = items.filter(t=>t.status==='finalizado').length;
+  const pct = items.length ? Math.round(done/items.length*100) : 0;
+  const agg = topicAggregate(s.topics);
+  const doneTopics = s.topics.filter(t=>t.done).length;
+  const pctTopics = s.topics.length ? Math.round(doneTopics/s.topics.length*100) : 0;
+  return `<div class="progress-card">
+    <div class="pc-top"><strong><span class="subject-dot" style="background:${s.color};width:9px;height:9px;margin-right:5px;"></span>${s.name}</strong><small>${done}/${items.length} no cronograma</small></div>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+    <div class="pc-meta">Checklist do edital: ${doneTopics}/${s.topics.length} (${pctTopics}%)</div>
+    <div class="pc-meta">${agg.q} questões · ${agg.a} acertos ${agg.pct===null?'':`· <span class="acc ${accuracyClass(agg.pct)}">${agg.pct}%</span>`}</div>
+  </div>`;
+}
+function renderStats(){
+  const allTopics = STATE.topics;
+  const totalDone = allTopics.filter(t=>t.status==='finalizado').length;
+  document.getElementById('stat-total').textContent = allTopics.length;
+  document.getElementById('stat-done').textContent = totalDone;
+  document.getElementById('stat-total-pct').textContent = allTopics.length ? Math.round(totalDone/allTopics.length*100)+'%' : '0%';
+
+  const wkSel = document.getElementById('stats-week-select');
+  const prevVal = wkSel.value ? Number(wkSel.value) : currentWeekId;
+  populateWeekOptions(wkSel, prevVal);
+  wkSel.onchange = renderStats;
+  const w = Number(wkSel.value);
+  const weekItems = topicsForWeek(w);
+  const weekDone = weekItems.filter(t=>t.status==='finalizado').length;
+  document.getElementById('stat-week-pct').textContent = weekItems.length ? Math.round(weekDone/weekItems.length*100)+'%' : '0%';
+
+  document.getElementById('board-base').innerHTML = STATE.subjects.filter(s=>s.cycle==='base').map(progressCardHTML).join('') || '<p class="empty-note">Nenhuma matéria base cadastrada.</p>';
+  document.getElementById('board-adapt').innerHTML = STATE.subjects.filter(s=>s.cycle!=='base').map(progressCardHTML).join('') || '<p class="empty-note">Nenhuma matéria adaptativa cadastrada.</p>';
+}
+
+/* =========================================================================
+   TIME TAB
+   ========================================================================= */
+function initTimeSubjectSelect(){
+  const sel = document.getElementById('log-subject');
+  const prev = sel.value;
+  sel.innerHTML = STATE.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  if(prev && STATE.subjects.find(s=>s.id===prev)) sel.value = prev;
+  populateLogTopicSelect();
+  const actSel = document.getElementById('log-activity');
+  populateActivitySelect(actSel, actSel.value);
+}
+function populateLogTopicSelect(){
+  const subj = subjectById(document.getElementById('log-subject').value);
+  const sel = document.getElementById('log-topic');
+  let opts = '<option value="">Geral (sem tópico específico)</option>';
+  if(subj) opts += subj.topics.map(t=>`<option value="${escapeAttr(t.name)}">${t.name}</option>`).join('');
+  sel.innerHTML = opts;
+}
+document.getElementById('log-subject').addEventListener('change', populateLogTopicSelect);
+
+function applyLogToTopic(log, sign){
+  if(!log.topicName) return;
+  const subj = subjectById(log.subjectId); if(!subj) return;
+  const topic = subj.topics.find(t=>t.name===log.topicName); if(!topic) return;
+  topic.questoes = Math.max(0, (topic.questoes||0) + sign*log.questions);
+  topic.acertos = Math.max(0, (topic.acertos||0) + sign*(log.questions-log.errors));
+  if(topic.acertos > topic.questoes) topic.acertos = topic.questoes;
+}
+function updateLog(id, fields){
+  const log = STATE.logs.find(l=>l.id===id); if(!log) return;
+  applyLogToTopic(log, -1);
+  Object.assign(log, fields);
+  applyLogToTopic(log, 1);
+  saveState();
+}
+
+document.getElementById('btn-add-log').addEventListener('click', ()=>{
+  const date = document.getElementById('log-date').value || new Date().toISOString().slice(0,10);
+  const subjectId = document.getElementById('log-subject').value;
+  const topicName = document.getElementById('log-topic').value || '';
+  const activity = document.getElementById('log-activity').value || '';
+  const notes = document.getElementById('log-notes').value.trim();
+  const hours = document.getElementById('log-hours').value.trim() || '00:00';
+  if(!/^\d{1,3}:\d{2}$/.test(hours)){ alert('Informe as horas no formato 00:00h, ex: 02:30'); return; }
+  const questions = Math.max(0, parseInt(document.getElementById('log-questions').value || '0'));
+  const errors = Math.max(0, parseInt(document.getElementById('log-errors').value || '0'));
+  const log = {id: STATE.nextId++, date, subjectId, topicName, activity, notes, hours, questions, errors: Math.min(errors, questions)};
+  STATE.logs.push(log);
+  applyLogToTopic(log, 1);
+  document.getElementById('log-hours').value=''; document.getElementById('log-questions').value=''; document.getElementById('log-errors').value=''; document.getElementById('log-notes').value='';
+  saveState(); renderTime();
+});
+
+function topicOptionsForSubject(subjectId, selected){
+  const subj = subjectById(subjectId);
+  let opts = `<option value="" ${!selected?'selected':''}>Geral (sem tópico)</option>`;
+  if(subj) opts += subj.topics.map(t=>`<option value="${escapeAttr(t.name)}" ${t.name===selected?'selected':''}>${t.name}</option>`).join('');
+  return opts;
+}
+function renderTime(){
+  initTimeSubjectSelect();
+  if(!document.getElementById('log-date').value) document.getElementById('log-date').value = new Date().toISOString().slice(0,10);
+
+  const tbody = document.getElementById('log-table-body');
+  const logsSorted = STATE.logs.slice().sort((a,b)=> b.date.localeCompare(a.date) || b.id-a.id);
+  document.getElementById('log-empty').style.display = logsSorted.length ? 'none' : 'block';
+  const subjectOptions = ()=> STATE.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+
+  tbody.innerHTML = logsSorted.map(l=>{
+    const pct = l.questions>0 ? Math.round(((l.questions-l.errors)/l.questions)*100) : null;
+    const pctHtml = pct===null ? '—' : `<span class="acc ${accuracyClass(pct)}">${pct}%</span>`;
+    return `<tr data-id="${l.id}">
+      <td><input type="date" class="log-edit" data-field="date" data-id="${l.id}" value="${l.date}"></td>
+      <td><select class="log-edit" data-field="subjectId" data-id="${l.id}">${STATE.subjects.map(s=>`<option value="${s.id}" ${s.id===l.subjectId?'selected':''}>${s.name}</option>`).join('')}</select></td>
+      <td><select class="log-edit" data-field="topicName" data-id="${l.id}">${topicOptionsForSubject(l.subjectId, l.topicName)}</select></td>
+      <td><select class="log-edit" data-field="activity" data-id="${l.id}">${activityOptionsHtml(l.activity)}</select></td>
+      <td><input type="text" class="log-edit" data-field="hours" data-id="${l.id}" value="${l.hours}" style="width:64px;"></td>
+      <td><input type="number" min="0" class="log-edit" data-field="questions" data-id="${l.id}" value="${l.questions}" style="width:56px;"></td>
+      <td><input type="number" min="0" class="log-edit" data-field="errors" data-id="${l.id}" value="${l.errors}" style="width:56px;"></td>
+      <td>${pctHtml}</td>
+      <td><input type="text" class="log-edit" data-field="notes" data-id="${l.id}" value="${escapeAttr(l.notes||'')}" title="${escapeAttr(l.notes||'')}" style="min-width:160px;"></td>
+      <td><button class="btn icon small" data-action="delete-log" data-id="${l.id}">🗑</button></td>
+    </tr>`;
+  }).join('');
+
+  document.querySelectorAll('.log-edit').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const id = parseInt(el.dataset.id);
+      const field = el.dataset.field;
+      let value = el.value;
+      if(field==='subjectId'){ updateLog(id, {subjectId:value, topicName:''}); renderTime(); return; }
+      if(field==='questions' || field==='errors') value = Math.max(0, parseInt(value||'0'));
+      if(field==='hours' && !/^\d{1,3}:\d{2}$/.test(value)){ alert('Formato de horas inválido. Use 00:00h, ex: 02:30'); renderTime(); return; }
+      updateLog(id, {[field]:value});
+      renderTime();
+    });
+  });
+  document.querySelectorAll('[data-action="delete-log"]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = parseInt(el.dataset.id);
+      openConfirm('Excluir este registro de estudo?', ()=>{
+        const log = STATE.logs.find(l=>l.id===id);
+        if(log) applyLogToTopic(log, -1);
+        STATE.logs = STATE.logs.filter(l=>l.id!==id);
+        saveState(); renderTime();
+      });
+    });
+  });
+
+  let totalMin=0, totalQ=0, totalE=0;
+  STATE.logs.forEach(l=>{ totalMin += minutesFromHHMM(l.hours); totalQ += l.questions; totalE += l.errors; });
+  document.getElementById('time-total-hours').textContent = hhmmFromMinutes(totalMin)+'h';
+  document.getElementById('time-total-questions').textContent = totalQ;
+  document.getElementById('time-total-acertos').textContent = totalQ-totalE;
+  const overallPct = totalQ>0 ? Math.round(((totalQ-totalE)/totalQ)*100) : 0;
+  const accEl = document.getElementById('time-total-acc');
+  accEl.textContent = overallPct+'%';
+  accEl.className = 'v acc ' + accuracyClass(overallPct);
+
+  renderLogSummary();
+  renderTimerSummary();
+}
+function renderLogSummary(){
+  const map = {};
+  STATE.logs.forEach(l=>{
+    const key = l.subjectId+'||'+(l.topicName||'');
+    if(!map[key]) map[key] = {subjectId:l.subjectId, topicName:l.topicName||'Geral (sem tópico específico)', minutes:0, questions:0, errors:0};
+    map[key].minutes += minutesFromHHMM(l.hours);
+    map[key].questions += l.questions;
+    map[key].errors += l.errors;
+  });
+  const rows = Object.values(map).sort((a,b)=> b.questions-a.questions);
+  document.getElementById('log-summary-body').innerHTML = rows.map(r=>{
+    const subj = subjectById(r.subjectId);
+    const acertos = r.questions - r.errors;
+    const pct = r.questions>0 ? Math.round(acertos/r.questions*100) : null;
+    return `<tr><td>${subj?subjectChip(subj):'—'}</td><td>${r.topicName}</td><td>${hhmmFromMinutes(r.minutes)}h</td><td>${r.questions}</td><td>${acertos}</td><td>${pct===null?'—':`<span class="acc ${accuracyClass(pct)}">${pct}%</span>`}</td></tr>`;
+  }).join('') || '<tr><td colspan="6" class="empty-note">Sem registros ainda.</td></tr>';
+}
+
+/* =========================================================================
+   TIMER TAB — cronômetro + adição manual, separado por matéria/assunto
+   ========================================================================= */
+let timerState = {running:false, startTs:null, elapsedMs:0, intervalId:null};
+function pad2(n){ return String(n).padStart(2,'0'); }
+function timerElapsedMs(){ return timerState.elapsedMs + (timerState.running ? Date.now()-timerState.startTs : 0); }
+function updateTimerDisplay(){
+  const ms = timerElapsedMs();
+  const totalSec = Math.floor(ms/1000);
+  const h = Math.floor(totalSec/3600), m = Math.floor((totalSec%3600)/60), s = totalSec%60;
+  const el = document.getElementById('timer-display');
+  if(el) el.textContent = `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+}
+function updateTimerUI(){
+  const hasElapsed = timerElapsedMs() > 0;
+  document.getElementById('timer-start').disabled = timerState.running;
+  document.getElementById('timer-start').textContent = (!timerState.running && hasElapsed) ? 'Retomar' : 'Iniciar';
+  document.getElementById('timer-pause').disabled = !timerState.running;
+  document.getElementById('timer-save').disabled = !hasElapsed;
+  document.getElementById('timer-discard').disabled = !hasElapsed;
+  document.getElementById('timer-status').textContent = timerState.running ? 'Em andamento' : (hasElapsed ? 'Pausado' : 'Parado');
+}
+document.getElementById('timer-start').addEventListener('click', ()=>{
+  if(timerState.running) return;
+  timerState.running = true;
+  timerState.startTs = Date.now();
+  timerState.intervalId = setInterval(updateTimerDisplay, 1000);
+  updateTimerUI();
+});
+document.getElementById('timer-pause').addEventListener('click', ()=>{
+  if(!timerState.running) return;
+  timerState.elapsedMs += Date.now() - timerState.startTs;
+  timerState.running = false;
+  clearInterval(timerState.intervalId);
+  updateTimerDisplay(); updateTimerUI();
+});
+document.getElementById('timer-discard').addEventListener('click', ()=>{
+  openConfirm('Descartar o tempo cronometrado nesta sessão? Essa ação não pode ser desfeita.', ()=>{
+    clearInterval(timerState.intervalId);
+    timerState = {running:false, startTs:null, elapsedMs:0, intervalId:null};
+    updateTimerDisplay(); updateTimerUI();
+  });
+});
+document.getElementById('timer-save').addEventListener('click', ()=>{
+  if(timerState.running){
+    timerState.elapsedMs += Date.now() - timerState.startTs;
+    timerState.running = false;
+    clearInterval(timerState.intervalId);
+  }
+  const minutesTotal = Math.round(timerState.elapsedMs/60000);
+  if(minutesTotal<1){ alert('Cronometre por pelo menos 1 minuto antes de salvar.'); updateTimerUI(); return; }
+  const subjectId = document.getElementById('timer-subject').value;
+  const topicName = document.getElementById('timer-topic').value || '';
+  const activity = document.getElementById('timer-activity').value || '';
+  const notes = document.getElementById('timer-notes').value.trim();
+  const log = {id:STATE.nextId++, date:new Date().toISOString().slice(0,10), subjectId, topicName, activity, notes, hours:hhmmFromMinutes(minutesTotal), questions:0, errors:0};
+  STATE.logs.push(log);
+  applyLogToTopic(log, 1);
+  timerState = {running:false, startTs:null, elapsedMs:0, intervalId:null};
+  document.getElementById('timer-notes').value = '';
+  updateTimerDisplay(); updateTimerUI();
+  saveState(); showToast('Sessão salva no histórico de tempo de estudo');
+  renderTime(); renderTimerSummary();
+});
+
+function initTimerSelects(){
+  const sel = document.getElementById('timer-subject');
+  const prev = sel.value;
+  sel.innerHTML = STATE.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  if(prev && STATE.subjects.find(s=>s.id===prev)) sel.value = prev;
+  populateTimerTopicSelect();
+  const actSel = document.getElementById('timer-activity');
+  populateActivitySelect(actSel, actSel.value);
+}
+function populateTimerTopicSelect(){
+  const subj = subjectById(document.getElementById('timer-subject').value);
+  const sel = document.getElementById('timer-topic');
+  let opts = '<option value="">Geral (sem tópico específico)</option>';
+  if(subj) opts += subj.topics.map(t=>`<option value="${escapeAttr(t.name)}">${t.name}</option>`).join('');
+  sel.innerHTML = opts;
+}
+document.getElementById('timer-subject').addEventListener('change', populateTimerTopicSelect);
+
+document.getElementById('tm-add').addEventListener('click', ()=>{
+  const date = document.getElementById('tm-date').value || new Date().toISOString().slice(0,10);
+  const hours = document.getElementById('tm-hours').value.trim();
+  if(!/^\d{1,3}:\d{2}$/.test(hours)){ alert('Informe as horas no formato 00:00h, ex: 01:00'); return; }
+  const subjectId = document.getElementById('timer-subject').value;
+  const topicName = document.getElementById('timer-topic').value || '';
+  const activity = document.getElementById('timer-activity').value || '';
+  const notes = document.getElementById('timer-notes').value.trim();
+  const log = {id:STATE.nextId++, date, subjectId, topicName, activity, notes, hours, questions:0, errors:0};
+  STATE.logs.push(log);
+  applyLogToTopic(log, 1);
+  document.getElementById('tm-hours').value='';
+  document.getElementById('timer-notes').value='';
+  saveState(); showToast('Tempo adicionado ao histórico');
+  renderTime(); renderTimerSummary();
+});
+
+/* ---- gerenciar atividades (lista editável usada nos formulários de tempo) ---- */
+function renderActivitiesManager(){
+  const wrap = document.getElementById('activities-manager');
+  if(!wrap) return;
+  wrap.innerHTML = STATE.activities.map((a,i)=>`
+    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+      <input type="text" class="act-name" data-idx="${i}" value="${escapeAttr(a)}" style="flex:1;padding:6px 8px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);">
+      <button class="btn icon small" data-action="delete-activity" data-idx="${i}" title="Excluir">🗑</button>
+    </div>`).join('') + `
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <input type="text" id="new-activity-input" placeholder="Nova atividade" style="flex:1;padding:6px 8px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);">
+      <button class="btn small gold" id="add-activity-btn">+ adicionar</button>
+    </div>`;
+  wrap.querySelectorAll('.act-name').forEach(el=>{
+    el.addEventListener('blur', ()=>{
+      const idx = parseInt(el.dataset.idx);
+      const v = el.value.trim();
+      if(v && v!==STATE.activities[idx]){ STATE.activities[idx] = v; saveState(); refreshActivitySelectsEverywhere(); renderTime(); }
+    });
+  });
+  wrap.querySelectorAll('[data-action="delete-activity"]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      if(STATE.activities.length<=1){ alert('Mantenha ao menos uma atividade na lista.'); return; }
+      const idx = parseInt(el.dataset.idx);
+      openConfirm('Excluir esta atividade da lista? Registros já salvos com ela mantêm o nome antigo.', ()=>{
+        STATE.activities.splice(idx,1);
+        saveState(); renderActivitiesManager(); refreshActivitySelectsEverywhere();
+      });
+    });
+  });
+  const addBtn = document.getElementById('add-activity-btn');
+  if(addBtn) addBtn.addEventListener('click', ()=>{
+    const inp = document.getElementById('new-activity-input');
+    const v = inp.value.trim();
+    if(!v) return;
+    STATE.activities.push(v);
+    inp.value='';
+    saveState(); renderActivitiesManager(); refreshActivitySelectsEverywhere();
+  });
+}
+function refreshActivitySelectsEverywhere(){
+  const t = document.getElementById('timer-activity'); if(t) populateActivitySelect(t, t.value);
+  const l = document.getElementById('log-activity'); if(l) populateActivitySelect(l, l.value);
+}
+const toggleActivitiesBtn = document.getElementById('toggle-activities');
+if(toggleActivitiesBtn){
+  toggleActivitiesBtn.addEventListener('click', ()=>{
+    const el = document.getElementById('activities-manager');
+    const showing = el.style.display !== 'none';
+    el.style.display = showing ? 'none' : 'block';
+    if(!showing) renderActivitiesManager();
+  });
+}
+
+function renderTimerSummary(){
+  const subjBars = document.getElementById('timer-subject-bars');
+  const topicBody = document.getElementById('timer-topic-table-body');
+  if(!subjBars || !topicBody) return;
+
+  const minBySubject = {}; STATE.subjects.forEach(s=> minBySubject[s.id]=0);
+  STATE.logs.forEach(l=>{ if(minBySubject[l.subjectId]!==undefined) minBySubject[l.subjectId] += minutesFromHHMM(l.hours); });
+  const totalMin = Object.values(minBySubject).reduce((a,b)=>a+b,0) || 1;
+  const sortedSubjects = STATE.subjects.slice().sort((a,b)=> minBySubject[b.id]-minBySubject[a.id]);
+  subjBars.innerHTML = sortedSubjects.filter(s=>minBySubject[s.id]>0 || true).map(s=>{
+    const pct = Math.round(minBySubject[s.id]/totalMin*100);
+    return `<div class="bar-row">
+      <div class="bar-label"><span class="subject-dot" style="background:${s.color}"></span>${s.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+      <div class="bar-pct">${hhmmFromMinutes(minBySubject[s.id])}h</div>
+    </div>`;
+  }).join('') || '<p class="empty-note">Nenhum tempo registrado ainda.</p>';
+
+  const map = {};
+  STATE.logs.forEach(l=>{
+    const key = l.subjectId+'||'+(l.topicName||'');
+    if(!map[key]) map[key] = {subjectId:l.subjectId, topicName:l.topicName||'Geral (sem tópico específico)', minutes:0};
+    map[key].minutes += minutesFromHHMM(l.hours);
+  });
+  const rows = Object.values(map).sort((a,b)=> b.minutes-a.minutes);
+  topicBody.innerHTML = rows.map(r=>{
+    const subj = subjectById(r.subjectId);
+    return `<tr><td>${subj?subjectChip(subj):'—'}</td><td>${r.topicName}</td><td>${hhmmFromMinutes(r.minutes)}h</td></tr>`;
+  }).join('') || '<tr><td colspan="3" class="empty-note">Nenhum tempo registrado ainda.</td></tr>';
+}
+
+function renderTimerPanel(){
+  initTimerSelects();
+  if(!document.getElementById('tm-date').value) document.getElementById('tm-date').value = new Date().toISOString().slice(0,10);
+  updateTimerDisplay(); updateTimerUI();
+  renderTimerSummary();
+}
+
+/* =========================================================================
+   CONFIRM MODAL
+   ========================================================================= */
+function openConfirm(text, cb){
+  document.getElementById('confirm-text').textContent = text;
+  confirmCallback = cb;
+  document.getElementById('modal-confirm').classList.add('show');
+}
+document.getElementById('confirm-cancel').addEventListener('click', ()=>{ document.getElementById('modal-confirm').classList.remove('show'); confirmCallback=null; });
+document.getElementById('confirm-ok').addEventListener('click', ()=>{
+  if(confirmCallback) confirmCallback();
+  document.getElementById('modal-confirm').classList.remove('show');
+  confirmCallback = null;
+});
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+async function init(){
+  const saved = await loadState();
+  STATE = saved || buildInitialState();
+
+  if(!STATE.weeks){
+    STATE.weeks = [];
+    for(let w=1; w<=24; w++) STATE.weeks.push({id:w, label:'', isFinal:false});
+    STATE.weeks.push({id:25, label:'', isFinal:true});
+    STATE.nextWeekId = 26;
+  }
+  if(!STATE.nextWeekId) STATE.nextWeekId = Math.max(...STATE.weeks.map(w=>w.id)) + 1;
+  if(!STATE.logs) STATE.logs = [];
+  if(!STATE.activities || !STATE.activities.length) STATE.activities = ['Teoria','Questões','Lei Seca','Revisão'];
+  STATE.subjects.forEach(s=> s.topics.forEach(t=>{ if(t.questoes===undefined) t.questoes=0; if(t.acertos===undefined) t.acertos=0; if(t.done===undefined) t.done=false; }));
+  STATE.logs.forEach(l=>{ if(l.topicName===undefined) l.topicName=''; if(l.activity===undefined) l.activity=''; if(l.notes===undefined) l.notes=''; });
+  if(!STATE.nextId) STATE.nextId = (Math.max(0,...STATE.topics.map(t=>t.id), ...(STATE.logs||[]).map(l=>l.id||0)) || 0) + 1;
+
+  currentWeekId = STATE.weeks[0].id;
+  renderCountdown();
+  initWeekSelect();
+  renderPlanning();
+  if(!saved) saveState();
+}
+init();
+</script>
+</body>
+</html>
